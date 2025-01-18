@@ -1,5 +1,5 @@
 import cloudinary from "../lib/cloudinary.js";
-import { generateToken } from "../lib/utils.js";
+import { generateToken } from "../utils/generateToken.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
@@ -31,7 +31,7 @@ export const signup = async (req, res) => {
 
     if (newUser) {
       // Generate JWT token
-      generateToken(newUser._id, res);
+      const token = generateToken(newUser._id);
       await newUser.save();
 
       res.status(201).json({
@@ -39,6 +39,7 @@ export const signup = async (req, res) => {
         fullName: newUser.fullName,
         email: newUser.email,
         profilePic: newUser.profilePic,
+        token: token,
       });
     } else {
       res.status(400).json({ message: "Invalid user data" });
